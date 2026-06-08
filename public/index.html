@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Financeiro — Regale Clicks</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke="#fff" stroke-width="2" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Regale Clicks</h1>
+      <span>Dashboard Financeiro</span>
+    </div>
+  </div>
+  <div class="header-center">
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="overview">Visão Geral</button>
+      <button class="tab-btn" data-tab="clientes">Clientes</button>
+      <button class="tab-btn" data-tab="resultado">Resultado</button>
+      <button class="tab-btn" data-tab="analise">Análise</button>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="status-pill" id="status-pill">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-label">Conectando…</span>
+    </div>
+    <button class="btn-refresh" id="btn-refresh" onclick="loadData()">
+      <svg id="refresh-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+      </svg>
+      Atualizar
+    </button>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main>
+
+  <!-- ════ TAB: VISÃO GERAL ════ -->
+  <section class="tab-content active" id="tab-overview">
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card" id="kpi-fat-card">
+        <div class="kpi-icon" style="background:rgba(91,33,182,.25)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-label">Faturamento Bruto</div>
+          <div class="kpi-value" id="kpi-fat">—</div>
+          <div class="kpi-trend" id="kpi-fat-sub">receita total</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:rgba(239,68,68,.2)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-label">Imposto DAS</div>
+          <div class="kpi-value" id="kpi-das">—</div>
+          <div class="kpi-trend" id="kpi-aliq">Simples Nacional</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:rgba(16,185,129,.2)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-label">Lucro Líquido</div>
+          <div class="kpi-value" id="kpi-lucro">—</div>
+          <div class="kpi-trend" id="kpi-margem-sub">após impostos</div>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:rgba(245,158,11,.2)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="kpi-body">
+          <div class="kpi-label">Valor por Sócio</div>
+          <div class="kpi-value" id="kpi-socio">—</div>
+          <div class="kpi-trend">distribuição igualitária</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráficos linha 1 -->
+    <div class="charts-row">
+
+      <!-- Pizza clientes -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Receita por Cliente</div>
+            <div class="chart-subtitle">Participação no faturamento</div>
+          </div>
+          <div class="chart-badge" id="badge-clientes">2 clientes</div>
+        </div>
+        <div class="chart-wrap chart-wrap-sm">
+          <canvas id="chartPizza"></canvas>
+        </div>
+        <div class="legend-custom" id="legend-pizza"></div>
+      </div>
+
+      <!-- Donut composição -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Composição do Faturamento</div>
+            <div class="chart-subtitle">Lucro vs impostos</div>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap-sm">
+          <canvas id="chartDonut"></canvas>
+          <div class="donut-center" id="donut-center-val">—</div>
+        </div>
+        <div class="legend-custom" id="legend-donut"></div>
+      </div>
+
+      <!-- Gauge margem -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Margem Líquida</div>
+            <div class="chart-subtitle">% do faturamento que sobra</div>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap-sm" style="position:relative">
+          <canvas id="chartGauge"></canvas>
+          <div class="gauge-center">
+            <div class="gauge-pct" id="gauge-pct">—</div>
+            <div class="gauge-label">margem</div>
+          </div>
+        </div>
+        <div class="gauge-status" id="gauge-status"></div>
+      </div>
+
+    </div>
+
+    <!-- Sócios -->
+    <div class="section-header">
+      <span class="section-label">Distribuição por Sócio</span>
+      <span class="section-pill">3 sócios</span>
+    </div>
+    <div class="socios-grid">
+      <div class="socio-card" id="sc-diogo">
+        <div class="socio-top">
+          <div class="socio-avatar" style="background:linear-gradient(135deg,#5B21B6,#7C3AED)">D</div>
+          <div class="socio-info">
+            <div class="socio-name">Diogo</div>
+            <div class="socio-role">Sócio fundador</div>
+          </div>
+        </div>
+        <div class="socio-value" id="s-diogo">—</div>
+        <div class="socio-bar"><div class="socio-bar-fill" style="width:100%"></div></div>
+        <div class="socio-pct">33,3% do lucro</div>
+      </div>
+      <div class="socio-card" id="sc-victor">
+        <div class="socio-top">
+          <div class="socio-avatar" style="background:linear-gradient(135deg,#0EA5E9,#0284C7)">V</div>
+          <div class="socio-info">
+            <div class="socio-name">Victor</div>
+            <div class="socio-role">Sócio fundador</div>
+          </div>
+        </div>
+        <div class="socio-value" id="s-victor">—</div>
+        <div class="socio-bar"><div class="socio-bar-fill" style="width:100%; background:linear-gradient(90deg,#0EA5E9,#0284C7)"></div></div>
+        <div class="socio-pct">33,3% do lucro</div>
+      </div>
+      <div class="socio-card" id="sc-henrique">
+        <div class="socio-top">
+          <div class="socio-avatar" style="background:linear-gradient(135deg,#10B981,#059669)">H</div>
+          <div class="socio-info">
+            <div class="socio-name">Henrique</div>
+            <div class="socio-role">Sócio fundador</div>
+          </div>
+        </div>
+        <div class="socio-value" id="s-henrique">—</div>
+        <div class="socio-bar"><div class="socio-bar-fill" style="width:100%; background:linear-gradient(90deg,#10B981,#059669)"></div></div>
+        <div class="socio-pct">33,3% do lucro</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ════ TAB: CLIENTES ════ -->
+  <section class="tab-content" id="tab-clientes">
+
+    <div class="section-header">
+      <span class="section-label">Clientes Ativos</span>
+      <span class="section-pill" id="badge-n-clientes">2 ativos</span>
+    </div>
+
+    <div class="clientes-grid">
+      <div class="cliente-card">
+        <div class="cliente-header">
+          <div class="cliente-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">CL</div>
+          <div>
+            <div class="cliente-name">Caminhoneiro Legal</div>
+            <div class="cliente-tag">Tráfego & Social Media</div>
+          </div>
+          <div class="cliente-status-dot"></div>
+        </div>
+        <div class="cliente-valor" id="cc-caminhoneiro">—</div>
+        <div class="cliente-label">mensalidade</div>
+        <div class="cliente-bar-wrap">
+          <div class="cliente-bar-track">
+            <div class="cliente-bar-fill" id="bar-caminhoneiro" style="width:0%;background:linear-gradient(90deg,#F59E0B,#D97706)"></div>
+          </div>
+          <span class="cliente-bar-pct" id="pct-caminhoneiro">—</span>
+        </div>
+        <div class="cliente-label">participação no faturamento</div>
+      </div>
+
+      <div class="cliente-card">
+        <div class="cliente-header">
+          <div class="cliente-avatar" style="background:linear-gradient(135deg,#06B6D4,#0891B2)">EP</div>
+          <div>
+            <div class="cliente-name">Clínica Epimed</div>
+            <div class="cliente-tag">Marketing Digital</div>
+          </div>
+          <div class="cliente-status-dot"></div>
+        </div>
+        <div class="cliente-valor" id="cc-epimed">—</div>
+        <div class="cliente-label">mensalidade</div>
+        <div class="cliente-bar-wrap">
+          <div class="cliente-bar-track">
+            <div class="cliente-bar-fill" id="bar-epimed" style="width:0%;background:linear-gradient(90deg,#06B6D4,#0891B2)"></div>
+          </div>
+          <span class="cliente-bar-pct" id="pct-epimed">—</span>
+        </div>
+        <div class="cliente-label">participação no faturamento</div>
+      </div>
+    </div>
+
+    <div class="charts-row two-col" style="margin-top:24px">
+      <div class="chart-card chart-wide">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Comparativo de Receita por Cliente</div>
+            <div class="chart-subtitle">Valor mensal em reais</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:260px">
+          <canvas id="chartBarClientes"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Market Share</div>
+            <div class="chart-subtitle">% do faturamento total</div>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap-sm">
+          <canvas id="chartPizza2"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box" id="insight-concentracao"></div>
+
+  </section>
+
+  <!-- ════ TAB: RESULTADO ════ -->
+  <section class="tab-content" id="tab-resultado">
+
+    <div class="charts-row two-col">
+      <div class="chart-card chart-wide">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Demonstrativo de Resultado (DRE)</div>
+            <div class="chart-subtitle">Faturamento → Deduções → Lucro</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:300px">
+          <canvas id="chartWaterfall"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Gauge de Margem</div>
+            <div class="chart-subtitle">Eficiência operacional</div>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap-sm" style="position:relative">
+          <canvas id="chartGauge2"></canvas>
+          <div class="gauge-center">
+            <div class="gauge-pct" id="gauge-pct2">—</div>
+            <div class="gauge-label">margem</div>
+          </div>
+        </div>
+        <div class="gauge-status" id="gauge-status2"></div>
+      </div>
+    </div>
+
+    <!-- DRE detalhado -->
+    <div class="dre-card">
+      <div class="dre-title">Demonstrativo Detalhado</div>
+      <div class="dre-table">
+        <div class="dre-row dre-positive">
+          <div class="dre-icon">+</div>
+          <div class="dre-desc">
+            <span class="dre-name">Faturamento Bruto</span>
+            <span class="dre-detail">soma dos contratos ativos</span>
+          </div>
+          <div class="dre-amount" id="dr-fat">—</div>
+        </div>
+        <div class="dre-row dre-negative">
+          <div class="dre-icon">−</div>
+          <div class="dre-desc">
+            <span class="dre-name">DAS — Simples Nacional</span>
+            <span class="dre-detail" id="dr-aliq">alíquota sobre faturamento</span>
+          </div>
+          <div class="dre-amount red" id="dr-das">—</div>
+        </div>
+        <div class="dre-row dre-result">
+          <div class="dre-icon">=</div>
+          <div class="dre-desc">
+            <span class="dre-name">Lucro Líquido Mensal</span>
+            <span class="dre-detail">distribuído entre os 3 sócios</span>
+          </div>
+          <div class="dre-amount green" id="dr-lucro">—</div>
+        </div>
+      </div>
+      <div class="dre-meta">
+        <div class="dre-meta-item">
+          <span class="dre-meta-label">Valor por sócio</span>
+          <span class="dre-meta-val" id="dr-socio">—</span>
+        </div>
+        <div class="dre-meta-item">
+          <span class="dre-meta-label">Margem líquida</span>
+          <span class="dre-meta-val" id="dr-margem">—</span>
+        </div>
+        <div class="dre-meta-item">
+          <span class="dre-meta-label">N° de clientes</span>
+          <span class="dre-meta-val">2</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ════ TAB: ANÁLISE ════ -->
+  <section class="tab-content" id="tab-analise">
+
+    <div class="section-header">
+      <span class="section-label">Análise Automática</span>
+      <span class="section-pill">IA Financeira</span>
+    </div>
+
+    <div class="insights-grid" id="insights-grid">
+      <!-- preenchido pelo JS -->
+    </div>
+
+    <div class="charts-row two-col" style="margin-top:24px">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Simulação: e se adquirir +1 cliente?</div>
+            <div class="chart-subtitle">Projeção com ticket médio atual</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:260px">
+          <canvas id="chartSimulacao"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Metas de Crescimento</div>
+            <div class="chart-subtitle">Faturamento necessário por cenário</div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="height:260px">
+          <canvas id="chartMetas"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- timestamp footer -->
+<div class="footer-bar">
+  <span id="last-update">Aguardando dados…</span>
+  <span class="footer-sep">·</span>
+  <span>Auto-refresh em <span id="countdown">30</span>s</span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
