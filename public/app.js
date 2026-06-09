@@ -482,12 +482,16 @@ function renderInsights(d) {
 
 function renderData(d) {
   // ── KPIs
-  set('kpi-fat',  BRL(d.faturamentoBruto));
-  set('kpi-das',  BRL(d.valorDAS));
-  set('kpi-lucro', BRL(d.lucroLiquido));
-  set('kpi-socio', BRL(d.lucroPorSocio));
+  set('kpi-fat',     BRL(d.faturamentoBruto));
+  set('kpi-das',     BRL(d.valorDAS));
+  set('kpi-lucro',   BRL(d.lucroLiquido));
+  set('kpi-socio',   BRL(d.lucroPorSocio));
+  set('kpi-reinvest', BRL(d.valorReinvestimento));
+  set('kpi-fluxo',    BRL(d.valorFluxoCaixa));
   set('kpi-aliq',  d.aliquotaDAS ? `Alíquota: ${PCT(d.aliquotaDAS)}` : 'Simples Nacional');
   set('kpi-margem-sub', d.margemLiquida ? `Margem: ${PCT(d.margemLiquida)}` : 'após impostos');
+  set('kpi-reinvest-sub', d.pctReinvestimento ? `${PCT(d.pctReinvestimento)} do lucro` : 'na agência');
+  set('kpi-fluxo-sub',    d.pctFluxoCaixa     ? `${PCT(d.pctFluxoCaixa)} do lucro`     : 'reserva operacional');
 
   // ── Sócios
   set('s-diogo',   BRL(d.lucroPorSocio));
