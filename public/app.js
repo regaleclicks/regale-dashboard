@@ -97,6 +97,79 @@ function buildPizza(canvasId, labels, values, colors, legendId) {
   }
 }
 
+function buildCaixa(data) {
+  destroyChart('chartCaixa');
+  if (!data.caixa) return;
+  const { meses, saldoInicial, saldoAtual, mesAtual } = data.caixa;
+
+  const labels  = meses.map(m => m.mes.replace('/2026',''));
+  const saldos  = meses.map(m => m.saldo);
+  const idxAtual = meses.findIndex(m => m.atual);
+
+  // Cores: meses passados/atual = primário, futuros = pontilhado/cinza
+  const pontColors = meses.map((m, i) =>
+    i <= idxAtual ? '#10B981' : 'rgba(16,185,129,.25)'
+  );
+
+  const ctx = $('chartCaixa').getContext('2d');
+
+  // Gradiente
+  const grad = ctx.createLinearGradient(0, 0, 0, 240);
+  grad.addColorStop(0, 'rgba(16,185,129,.25)');
+  grad.addColorStop(1, 'rgba(16,185,129,.01)');
+
+  charts['chartCaixa'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Saldo (R$)',
+        data: saldos,
+        borderColor: '#10B981',
+        backgroundColor: grad,
+        pointBackgroundColor: pontColors,
+        pointBorderColor: pontColors,
+        pointRadius: meses.map((m, i) => m.atual ? 7 : 4),
+        pointHoverRadius: 7,
+        borderWidth: 2.5,
+        fill: true,
+        tension: .35,
+        segment: {
+          borderDash: ctx => ctx.p1DataIndex > idxAtual ? [5, 4] : undefined,
+          borderColor: ctx => ctx.p1DataIndex > idxAtual ? 'rgba(16,185,129,.35)' : '#10B981',
+        },
+        datalabels: { display: false },
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` Saldo: ${BRL(ctx.raw)}`,
+            afterLabel: ctx => meses[ctx.dataIndex].atual ? '← Mês atual' : '',
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(255,255,255,.04)' }, ticks: { color: '#6B7280', font: { size: 10 } } },
+        y: {
+          grid: { color: 'rgba(255,255,255,.04)' },
+          ticks: { color: '#6B7280', callback: v => 'R$' + (v/1000).toFixed(1) + 'k' }
+        }
+      },
+      animation: { duration: 900 }
+    }
+  });
+
+  // KPI + labels
+  set('kpi-caixa', BRL(saldoAtual));
+  set('kpi-caixa-sub', mesAtual ? `saldo em ${mesAtual}` : 'saldo atual');
+  set('caixa-inicial', BRL(saldoInicial));
+  set('caixa-atual-label', BRL(saldoAtual));
+  set('badge-caixa-mes', mesAtual || '2026');
+}
+
 function buildAlocacao(data) {
   destroyChart('chartAlocacao');
   const retirada  = data.valorRetiradaSocios ?? 0;
@@ -534,6 +607,7 @@ function renderData(d) {
   buildGauge('chartGauge2', d.margemLiquida, 'gauge-status2');
   set('gauge-pct',  PCT(d.margemLiquida));
   set('gauge-pct2', PCT(d.margemLiquida));
+  buildCaixa(d);
   buildAlocacao(d);
   buildBarClientes(d);
   buildWaterfall(d);
