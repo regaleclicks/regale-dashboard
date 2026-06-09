@@ -97,6 +97,83 @@ function buildPizza(canvasId, labels, values, colors, legendId) {
   }
 }
 
+function renderPagamentos(data) {
+  const cal = data.calendario;
+  if (!cal) return;
+
+  // Timeline
+  const timeline = $('pgto-timeline');
+  const avatarColors = ['#F59E0B','#06B6D4','#F59E0B'];
+  timeline.innerHTML = cal.pgtos.map((p, i) => `
+    <div class="pgto-card">
+      <div class="pgto-header">
+        <div class="pgto-dia">${p.dia}</div>
+        <div class="pgto-cliente">${p.cliente}</div>
+        <div class="pgto-bruto">${BRL(p.bruto)}</div>
+      </div>
+      <div class="pgto-grid">
+        <div class="pgto-item">
+          <div class="pgto-item-label">DAS (−)</div>
+          <div class="pgto-item-val red">${BRL(p.das)}</div>
+        </div>
+        <div class="pgto-item">
+          <div class="pgto-item-label">Líquido</div>
+          <div class="pgto-item-val green">${BRL(p.liquido)}</div>
+        </div>
+        <div class="pgto-item">
+          <div class="pgto-item-label">Retirada sócios</div>
+          <div class="pgto-item-val">${BRL(p.retiradaTotal)}</div>
+        </div>
+        <div class="pgto-item">
+          <div class="pgto-item-label">Por sócio</div>
+          <div class="pgto-item-val green">${BRL(p.porSocio)}</div>
+        </div>
+        <div class="pgto-item">
+          <div class="pgto-item-label">Reinvestimento</div>
+          <div class="pgto-item-val cyan">${BRL(p.reinvestimento)}</div>
+        </div>
+        <div class="pgto-item">
+          <div class="pgto-item-label">Fluxo de Caixa</div>
+          <div class="pgto-item-val warn">${BRL(p.fluxoCaixa)}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  set('badge-pgtos', cal.pgtos.length + ' pagamentos');
+
+  // Totais
+  const t = cal.total;
+  set('tot-bruto',    BRL(t.bruto));
+  set('tot-das',      BRL(t.das));
+  set('tot-liquido',  BRL(t.liquido));
+  set('tot-retirada', BRL(t.retiradaTotal));
+  set('tot-porsocio', BRL(t.porSocio));
+  set('tot-reinvest', BRL(t.reinvestimento));
+  set('tot-fluxo',    BRL(t.fluxoCaixa));
+
+  // Cards sócios
+  const avatares = [
+    { cor:'linear-gradient(135deg,#5B21B6,#7C3AED)', letra:'D' },
+    { cor:'linear-gradient(135deg,#0EA5E9,#0284C7)', letra:'V' },
+    { cor:'linear-gradient(135deg,#10B981,#059669)', letra:'H' },
+  ];
+  $('pgto-socios').innerHTML = cal.socios.map((s, i) => `
+    <div class="socio-card">
+      <div class="socio-top">
+        <div class="socio-avatar" style="background:${avatares[i].cor}">${avatares[i].letra}</div>
+        <div class="socio-info">
+          <div class="socio-name">${s.nome}</div>
+          <div class="socio-role">${s.primeiroRecebimento || '—'}</div>
+        </div>
+      </div>
+      <div class="socio-value">${BRL(s.totalMes)}</div>
+      <div class="socio-bar"><div class="socio-bar-fill" style="width:100%;background:${avatares[i].cor}"></div></div>
+      <div class="socio-pct">total no mês</div>
+    </div>
+  `).join('');
+}
+
 function buildCaixa(data) {
   destroyChart('chartCaixa');
   if (!data.caixa) return;
@@ -607,6 +684,7 @@ function renderData(d) {
   buildGauge('chartGauge2', d.margemLiquida, 'gauge-status2');
   set('gauge-pct',  PCT(d.margemLiquida));
   set('gauge-pct2', PCT(d.margemLiquida));
+  renderPagamentos(d);
   buildCaixa(d);
   buildAlocacao(d);
   buildBarClientes(d);

@@ -446,6 +446,48 @@ main {
 .insight-card-body  { font-size: .75rem; color: var(--muted2); line-height: 1.6; }
 .insight-card-body strong { color: var(--text); }
 
+/* ══ PAGAMENTOS ══ */
+.pgto-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.pgto-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(91,33,182,.08);
+}
+.pgto-dia {
+  background: var(--primary);
+  color: #fff;
+  font-size: .75rem; font-weight: 800;
+  border-radius: 8px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pgto-cliente { font-size: .95rem; font-weight: 700; }
+.pgto-bruto   { margin-left: auto; font-size: 1rem; font-weight: 800; color: var(--primary-l); flex-shrink:0; }
+.pgto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0;
+}
+.pgto-item {
+  padding: 14px 18px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.pgto-item:last-child { border-right: none; }
+.pgto-item-label { font-size: .65rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted2); margin-bottom: 4px; }
+.pgto-item-val   { font-size: .95rem; font-weight: 700; }
+.pgto-item-val.red   { color: var(--danger); }
+.pgto-item-val.green { color: var(--success); }
+.pgto-item-val.cyan  { color: var(--info); }
+.pgto-item-val.warn  { color: var(--warn); }
+
 /* ══ ALOCAÇÃO ══ */
 .aloc-card {
   background: var(--card);

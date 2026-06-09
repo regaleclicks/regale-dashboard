@@ -32,6 +32,7 @@
       <button class="tab-btn" data-tab="clientes">Clientes</button>
       <button class="tab-btn" data-tab="resultado">Resultado</button>
       <button class="tab-btn" data-tab="analise">Análise</button>
+      <button class="tab-btn" data-tab="pagamentos">Pagamentos</button>
     </div>
   </div>
   <div class="header-right">
@@ -498,6 +499,60 @@
         </div>
       </div>
     </div>
+
+  </section>
+
+  <!-- ════ TAB: PAGAMENTOS ════ -->
+  <section class="tab-content" id="tab-pagamentos">
+
+    <div class="section-header">
+      <span class="section-label">Calendário de Pagamentos</span>
+      <span class="section-pill" id="badge-pgtos">3 pagamentos</span>
+    </div>
+
+    <!-- Timeline de pagamentos -->
+    <div id="pgto-timeline" style="display:flex;flex-direction:column;gap:14px;margin-bottom:28px"></div>
+
+    <!-- Total do mês -->
+    <div class="dre-card" style="margin-bottom:28px">
+      <div class="dre-title">Total do Mês</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0">
+        <div class="dre-meta-item">
+          <div class="dre-meta-label">Faturamento Bruto</div>
+          <div class="dre-meta-val" id="tot-bruto">—</div>
+        </div>
+        <div class="dre-meta-item">
+          <div class="dre-meta-label">DAS (15,5%)</div>
+          <div class="dre-meta-val" style="color:var(--danger)" id="tot-das">—</div>
+        </div>
+        <div class="dre-meta-item">
+          <div class="dre-meta-label">Lucro Líquido</div>
+          <div class="dre-meta-val" style="color:var(--success)" id="tot-liquido">—</div>
+        </div>
+        <div class="dre-meta-item">
+          <div class="dre-meta-label">Retirada Sócios</div>
+          <div class="dre-meta-val" id="tot-retirada">—</div>
+        </div>
+        <div class="dre-meta-item">
+          <div class="dre-meta-label">Por Sócio</div>
+          <div class="dre-meta-val" style="color:var(--success)" id="tot-porsocio">—</div>
+        </div>
+        <div class="dre-meta-item">
+          <div class="dre-meta-label">Reinvestimento</div>
+          <div class="dre-meta-val" id="tot-reinvest">—</div>
+        </div>
+        <div class="dre-meta-item">
+          <div class="dre-meta-label">Fluxo de Caixa</div>
+          <div class="dre-meta-val" id="tot-fluxo">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumo por sócio -->
+    <div class="section-header">
+      <span class="section-label">O que cada sócio recebe</span>
+    </div>
+    <div class="socios-grid" id="pgto-socios"></div>
 
   </section>
 

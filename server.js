@@ -4,9 +4,10 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
-const SHEET_ID    = '1mZuIj3Ss6mfcKXs_37A_Tb5zRvKd6beHe013Xd3rkFw';
-const SHEET_NAME  = 'Resumo (sem custos fixos)';
-const SHEET_CAIXA = 'Caixa Total';
+const SHEET_ID       = '1mZuIj3Ss6mfcKXs_37A_Tb5zRvKd6beHe013Xd3rkFw';
+const SHEET_NAME     = 'Resumo (sem custos fixos)';
+const SHEET_CAIXA    = 'Caixa Total';
+const SHEET_CALENDAR = 'Calendário de Pagamentos';
 
 async function fetchSheet(sheetName) {
   const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
@@ -21,9 +22,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/financeiro', async (req, res) => {
   try {
-    const [rows, rowsCaixa] = await Promise.all([
+    const [rows, rowsCaixa, rowsCal] = await Promise.all([
       fetchSheet(SHEET_NAME),
       fetchSheet(SHEET_CAIXA),
+      fetchSheet(SHEET_CALENDAR),
     ]);
 
     // Lê célula por índice: linha 0-based, coluna 0-based
@@ -105,6 +107,47 @@ app.get('/api/financeiro', async (req, res) => {
         const mesAtual   = meses.find(m => m.atual) ?? meses.filter(m => m.saldo > 0).pop() ?? meses[0];
         const saldoAtual = mesAtual?.saldo ?? 0;
         return { saldoInicial, saldoAtual, mesAtual: mesAtual?.mes ?? '', meses };
+      })(),
+
+      // ── Calendário de Pagamentos
+      // Rows 0-3: alíquotas/percentuais (ignorar, já vêm do resumo)
+      // Row 4: cabeçalho
+      // Rows 5-7: pagamentos (dia, cliente, bruto, DAS, líquido, retirada, porSocio, reinvest, FC)
+      // Row 8: totais do mês
+      // Rows 10-12: resumo por sócio
+      calendario: (() => {
+        const g = (r, c) => rowsCal[r]?.c?.[c]?.v ?? null;
+        const f = (r, c) => rowsCal[r]?.c?.[c]?.f ?? null;
+
+        const pgtos = [5, 6, 7].map(i => ({
+          dia:          g(i, 0),
+          cliente:      g(i, 1),
+          bruto:        g(i, 2),
+          das:          g(i, 3),
+          liquido:      g(i, 4),
+          retiradaTotal:g(i, 5),
+          porSocio:     g(i, 6),
+          reinvestimento:g(i,7),
+          fluxoCaixa:   g(i, 8),
+        })).filter(p => p.dia);
+
+        const total = {
+          bruto:         g(8, 2),
+          das:           g(8, 3),
+          liquido:       g(8, 4),
+          retiradaTotal: g(8, 5),
+          porSocio:      g(8, 6),
+          reinvestimento:g(8, 7),
+          fluxoCaixa:    g(8, 8),
+        };
+
+        const socios = ['Diogo','Victor','Henrique'].map((nome, i) => ({
+          nome,
+          primeiroRecebimento: g(10 + i, 1),
+          totalMes:            g(10 + i, 8),
+        }));
+
+        return { pgtos, total, socios };
       })(),
 
       updatedAt: new Date().toISOString(),
