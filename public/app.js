@@ -163,7 +163,7 @@ function buildCaixa(data) {
   });
 
   // KPI + labels
-  set('kpi-caixa', BRL(saldoAtual));
+  set('kpi-caixa', BRL0(saldoAtual));
   set('kpi-caixa-sub', mesAtual ? `saldo em ${mesAtual}` : 'saldo atual');
   set('caixa-inicial', BRL(saldoInicial));
   set('caixa-atual-label', BRL(saldoAtual));
@@ -554,13 +554,13 @@ function renderInsights(d) {
 }
 
 function renderData(d) {
-  // ── KPIs
-  set('kpi-fat',     BRL(d.faturamentoBruto));
-  set('kpi-das',     BRL(d.valorDAS));
-  set('kpi-lucro',   BRL(d.lucroLiquido));
-  set('kpi-socio',   BRL(d.lucroPorSocio));
-  set('kpi-reinvest', BRL(d.valorReinvestimento));
-  set('kpi-fluxo',    BRL(d.valorFluxoCaixa));
+  // ── KPIs (sem decimais para caber nos cards)
+  set('kpi-fat',      BRL0(d.faturamentoBruto));
+  set('kpi-das',      BRL0(d.valorDAS));
+  set('kpi-lucro',    BRL0(d.lucroLiquido));
+  set('kpi-socio',    BRL0(d.lucroPorSocio));
+  set('kpi-reinvest', BRL0(d.valorReinvestimento));
+  set('kpi-fluxo',    BRL0(d.valorFluxoCaixa));
   set('kpi-aliq',  d.aliquotaDAS ? `Alíquota: ${PCT(d.aliquotaDAS)}` : 'Simples Nacional');
   set('kpi-margem-sub', d.margemLiquida ? `Margem: ${PCT(d.margemLiquida)}` : 'após impostos');
   set('kpi-reinvest-sub', d.pctReinvestimento ? `${PCT(d.pctReinvestimento)} do lucro` : 'na agência');
