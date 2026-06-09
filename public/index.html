@@ -152,6 +152,59 @@
 
     </div>
 
+    <!-- Distribuição do lucro -->
+    <div class="section-header" style="margin-top:8px">
+      <span class="section-label">Alocação do Lucro</span>
+      <span class="section-pill">3 destinos</span>
+    </div>
+
+    <div class="charts-row two-col" style="margin-bottom:24px">
+
+      <!-- Donut alocação -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Distribuição do Lucro Líquido</div>
+            <div class="chart-subtitle">Retirada · Reinvestimento · Fluxo de Caixa</div>
+          </div>
+        </div>
+        <div class="chart-wrap chart-wrap-sm" style="position:relative">
+          <canvas id="chartAlocacao"></canvas>
+          <div class="donut-center" id="donut-aloc-val">—</div>
+        </div>
+        <div class="legend-custom" id="legend-alocacao"></div>
+      </div>
+
+      <!-- Cards de alocação -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="aloc-card" style="border-color:#5B21B6">
+          <div class="aloc-icon" style="background:rgba(91,33,182,.2)">👥</div>
+          <div class="aloc-body">
+            <div class="aloc-label">Retirada dos Sócios</div>
+            <div class="aloc-value" id="aloc-retirada">—</div>
+            <div class="aloc-sub"><span id="aloc-pct-retirada">—</span> do lucro · <span id="aloc-por-socio">—</span>/sócio</div>
+          </div>
+        </div>
+        <div class="aloc-card" style="border-color:#06B6D4">
+          <div class="aloc-icon" style="background:rgba(6,182,212,.2)">📈</div>
+          <div class="aloc-body">
+            <div class="aloc-label">Reinvestimento</div>
+            <div class="aloc-value" id="aloc-reinvest">—</div>
+            <div class="aloc-sub"><span id="aloc-pct-reinvest">—</span> do lucro · crescimento da agência</div>
+          </div>
+        </div>
+        <div class="aloc-card" style="border-color:#F59E0B">
+          <div class="aloc-icon" style="background:rgba(245,158,11,.2)">🏦</div>
+          <div class="aloc-body">
+            <div class="aloc-label">Fluxo de Caixa</div>
+            <div class="aloc-value" id="aloc-fluxo">—</div>
+            <div class="aloc-sub"><span id="aloc-pct-fluxo">—</span> do lucro · reserva operacional</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- Sócios -->
     <div class="section-header">
       <span class="section-label">Distribuição por Sócio</span>
@@ -168,7 +221,7 @@
         </div>
         <div class="socio-value" id="s-diogo">—</div>
         <div class="socio-bar"><div class="socio-bar-fill" style="width:100%"></div></div>
-        <div class="socio-pct">33,3% do lucro</div>
+        <div class="socio-pct">33,3% da retirada</div>
       </div>
       <div class="socio-card" id="sc-victor">
         <div class="socio-top">
@@ -180,7 +233,7 @@
         </div>
         <div class="socio-value" id="s-victor">—</div>
         <div class="socio-bar"><div class="socio-bar-fill" style="width:100%; background:linear-gradient(90deg,#0EA5E9,#0284C7)"></div></div>
-        <div class="socio-pct">33,3% do lucro</div>
+        <div class="socio-pct">33,3% da retirada</div>
       </div>
       <div class="socio-card" id="sc-henrique">
         <div class="socio-top">
@@ -192,7 +245,7 @@
         </div>
         <div class="socio-value" id="s-henrique">—</div>
         <div class="socio-bar"><div class="socio-bar-fill" style="width:100%; background:linear-gradient(90deg,#10B981,#059669)"></div></div>
-        <div class="socio-pct">33,3% do lucro</div>
+        <div class="socio-pct">33,3% da retirada</div>
       </div>
     </div>
 

@@ -97,6 +97,64 @@ function buildPizza(canvasId, labels, values, colors, legendId) {
   }
 }
 
+function buildAlocacao(data) {
+  destroyChart('chartAlocacao');
+  const retirada  = data.valorRetiradaSocios ?? 0;
+  const reinvest  = data.valorReinvestimento  ?? 0;
+  const fluxo     = data.valorFluxoCaixa      ?? 0;
+  const total     = data.lucroLiquido         ?? (retirada + reinvest + fluxo);
+  const ctx = $('chartAlocacao').getContext('2d');
+  charts['chartAlocacao'] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Retirada Sócios', 'Reinvestimento', 'Fluxo de Caixa'],
+      datasets: [{
+        data: [retirada, reinvest, fluxo],
+        backgroundColor: ['#7C3AED', '#06B6D4', '#F59E0B'],
+        borderWidth: 0, hoverOffset: 8
+      }]
+    },
+    options: {
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        datalabels: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => ` ${BRL(ctx.raw)}  (${(ctx.raw/total*100).toFixed(1)}%)` }
+        }
+      },
+      animation: { duration: 800 }
+    }
+  });
+  set('donut-aloc-val', BRL0(total));
+
+  // Legend
+  const items = [
+    { l:'Retirada Sócios', v:retirada,  c:'#7C3AED' },
+    { l:'Reinvestimento',  v:reinvest,  c:'#06B6D4' },
+    { l:'Fluxo de Caixa',  v:fluxo,     c:'#F59E0B' },
+  ];
+  $('legend-alocacao').innerHTML = items.map(i =>
+    `<div class="legend-item">
+      <div class="legend-left">
+        <div class="legend-dot" style="background:${i.c}"></div>
+        <span class="legend-name">${i.l}</span>
+      </div>
+      <span><span class="legend-val">${BRL0(i.v)}</span>
+        <span class="legend-pct">(${total > 0 ? (i.v/total*100).toFixed(0) : 0}%)</span></span>
+    </div>`
+  ).join('');
+
+  // Cards
+  set('aloc-retirada',     BRL(retirada));
+  set('aloc-reinvest',     BRL(reinvest));
+  set('aloc-fluxo',        BRL(fluxo));
+  set('aloc-pct-retirada', PCT(data.pctRetiradaSocios));
+  set('aloc-pct-reinvest', PCT(data.pctReinvestimento));
+  set('aloc-pct-fluxo',    PCT(data.pctFluxoCaixa));
+  set('aloc-por-socio',    BRL(data.lucroPorSocio));
+}
+
 function buildDonut(data) {
   destroyChart('chartDonut');
   const lucro = data.lucroLiquido ?? 0;
@@ -472,6 +530,7 @@ function renderData(d) {
   buildGauge('chartGauge2', d.margemLiquida, 'gauge-status2');
   set('gauge-pct',  PCT(d.margemLiquida));
   set('gauge-pct2', PCT(d.margemLiquida));
+  buildAlocacao(d);
   buildBarClientes(d);
   buildWaterfall(d);
   buildSimulacao(d);
